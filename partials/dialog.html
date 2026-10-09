@@ -1,0 +1,54 @@
+<!-- Request form. Owner: contact. Every [data-action="request"] control opens it (src/sections/contact/request.js).
+     There is no backend: on submit it opens the visitor's email app with the request filled in, then
+     shows a confirmation with the address to copy in case no mail app opened. Without JS the
+     request links still go to #contact. -->
+<dialog class="req" id="request" aria-labelledby="req-title">
+  <div class="req-panel">
+    <button class="req-x" type="button" data-req-close aria-label="Close">
+      <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true" focusable="false"><path d="M5 5l10 10M15 5L5 15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
+
+    <div class="req-view req-view-form">
+      <h2 class="req-title" id="req-title" tabindex="-1">Request a design</h2>
+      <p class="req-intro">Send the protein and the system you express it in. We send back a <span class="nw">Trias-designed</span> sequence.</p>
+      <form class="req-form" novalidate>
+        <div class="field">
+          <label for="req-name">Name</label>
+          <input id="req-name" name="name" type="text" autocomplete="name" maxlength="120" required aria-describedby="req-name-err">
+          <p class="field-err" id="req-name-err" hidden></p>
+        </div>
+        <div class="field">
+          <label for="req-email">Email</label>
+          <input id="req-email" name="email" type="email" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false" maxlength="254" required aria-describedby="req-email-err">
+          <p class="field-err" id="req-email-err" hidden></p>
+        </div>
+        <div class="field">
+          <label for="req-protein">Protein and expression system</label>
+          <p class="field-hint" id="req-protein-hint">The protein, and the cells or animal model you express it in.</p>
+          <textarea id="req-protein" name="protein" rows="3" maxlength="1000" required aria-describedby="req-protein-hint req-protein-err"></textarea>
+          <p class="field-err" id="req-protein-err" hidden></p>
+        </div>
+        <div class="req-actions">
+          <button class="btn" type="submit">Continue in email</button>
+          <p class="req-note">Opens your email app with a message to info@triasbio.com, ready to send.</p>
+        </div>
+      </form>
+    </div>
+
+    <div class="req-view req-view-done" hidden>
+      <h2 class="req-title" id="req-done-title" tabindex="-1">Check your email app.</h2>
+      <p class="req-intro">A message to info@triasbio.com should be open with your request filled in. Send it from there.</p>
+      <div class="req-fallback">
+        <p class="req-fallback-l">No email app opened? Copy the address and the request, then send them from any email account.</p>
+        <div class="req-copyrow">
+          <a class="copy" href="mailto:info@triasbio.com" data-copy="info@triasbio.com">info@triasbio.com</a>
+          <button class="copy-msg" type="button" data-copy-message>
+            <span class="copy-msg-l">Copy request</span>
+            <span class="copy-done" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16" focusable="false"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Copied</span>
+          </button>
+        </div>
+      </div>
+      <button class="btn req-done-btn" type="button" data-req-close>Done</button>
+    </div>
+  </div>
+</dialog>

@@ -1,0 +1,104 @@
+/* Owner: 3D. The fixed stage for the strand, its poster stills, and the figure caption.
+   stage.js writes opacity, transform and filter on .stage-inner (forward / receded / hidden)
+   as a continuous function of scroll position; the short linear transition only smooths
+   wheel steps, so the strand never lags behind the content it must stay clear of. */
+.stage { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.stage-inner {
+  position: absolute; top: var(--header-h); right: 0; width: 52vw;
+  height: calc(100vh - var(--header-h)); height: calc(100lvh - var(--header-h));
+  opacity: 0; transform-origin: 50% 50%;
+  transition: opacity 160ms linear, transform 160ms linear, filter 160ms linear;
+  will-change: opacity, transform;
+}
+#gl { position: absolute; inset: 0; width: 100%; height: 100%; display: block; opacity: 0; transition: opacity var(--dur-l) var(--ease); }
+.gl-ready #gl { opacity: 1; }
+
+/* ---------- Poster stills ---------- */
+.poster {
+  position: absolute; top: 0; left: 50%; height: 100%; width: auto; max-width: none;
+  transform: translateX(-50%); overflow: visible; transition: opacity var(--dur-l) var(--ease);
+  --sage: #8fc9a3;
+}
+.poster-helix { aspect-ratio: 3 / 4; }
+.poster-dial { aspect-ratio: 1; }
+.stage-inner[data-fig="dial"] .poster-helix, .stage-inner:not([data-fig="dial"]) .poster-dial { opacity: 0; }
+.gl-ready .poster { opacity: 0 !important; }
+
+/* Strand: neutral pearl shades; a region lights sage as state.region rises (anatomy). */
+.poster .sa { --c: #ecebe6; } .poster .sg { --c: #d7d5cf; } .poster .sc { --c: #b3b1ac; } .poster .su { --c: #9a9995; }
+.poster .sb { --c: #e6e3dc; }
+.poster-helix .k0 { --lit: var(--r-cap, 0); } .poster-helix .k1 { --lit: var(--r-utr5, 0); }
+.poster-helix .k2 { --lit: var(--r-cds, 0); } .poster-helix .k3 { --lit: var(--r-utr3, 0); }
+.poster-helix .k4 { --lit: var(--r-polyA, 0); }
+.poster-helix line { stroke: color-mix(in srgb, var(--sage) calc(var(--lit, 0) * 100%), var(--c, #e6e3dc)); transition: stroke var(--dur-m) var(--ease); }
+.poster .cp { --c: #f1ece2; fill: color-mix(in srgb, var(--sage) calc(var(--lit, 0) * 100%), var(--c)); transition: fill var(--dur-m) var(--ease); }
+.poster .cp.sa { --c: #ecebe6; }
+
+/* Protein step: ribosomes and chains show inside the window; outside it the strand dims. */
+.ph-s { transition: opacity var(--dur-m) var(--ease); }
+.ph-p { opacity: 0; transition: opacity var(--dur-m) var(--ease); }
+.ph-p circle { fill: #93c8a5; }
+.ph-p .rb { fill: #a4cfb2; }
+.stage-inner[data-fig="protein"][data-live="1"] .ph-p { opacity: 1; }
+.stage-inner[data-fig="protein"][data-live="1"] .poster-helix .k2 { --lit: .38; }
+.stage-inner[data-fig="protein"][data-live="0"] .ph-s { opacity: .55; }
+
+/* Dial: rods lit from 00:00 to the hour, hour ticks, the sun or moon at the clock's hour. */
+.poster-dial .pr { stroke: var(--c); stroke-opacity: .9; transition: stroke var(--dur-s) var(--ease); }
+.poster-dial .pr.on { stroke: var(--sage); stroke-opacity: 1; }
+.poster-dial .pd-bb { fill: none; stroke: #e6e3dc; stroke-opacity: .55; }
+.poster-dial .pd-lit { fill: none; stroke: var(--sage); }
+.poster-dial .tk { stroke: #bdbab3; stroke-opacity: .6; stroke-width: 4; }
+.poster-dial .tk.mj { stroke: #f4f1ea; stroke-width: 6; }
+.poster-dial .pd-mark { fill: #f4f1ea; stroke: #f4f1ea; }
+.poster-dial .pd-mark .gm, .poster-dial .pd-mark .gs circle, .poster-dial .pd-mark .gr path { stroke: none; }
+.poster-dial .pd-mark .gm, .poster-dial .pd-mark .gs, .poster-dial .pd-mark .gr { display: none; }
+.poster-dial .pd-mark[data-kind="moon"] .gm, .poster-dial .pd-mark[data-kind="sun"] .gs, .poster-dial .pd-mark[data-kind="rise"] .gr { display: inline; }
+
+/* ---------- Figure caption: text face, 12px, sentence case ---------- */
+.hud {
+  position: fixed; z-index: 2; right: var(--gutter); bottom: 24px; display: grid; gap: 3px; text-align: right;
+  pointer-events: none; font-family: var(--text); font-size: 12px; line-height: 1.35; letter-spacing: 0;
+  opacity: 0; transform: translateY(4px); transition: opacity var(--dur-m) var(--ease), transform var(--dur-m) var(--ease);
+}
+.hud.on { opacity: 1; transform: none; }
+.hud-name { color: var(--fg-2); font-weight: 500; }
+.hud-sub { color: var(--fg-3); font-variant-numeric: tabular-nums; }
+
+/* ---------- Phones: the canvas rides inside the slot that shows most of itself ----------
+   Each slot sizes itself (sections may set a shorter height); the canvas fills its host.
+   A slot without the canvas shows the baked still (scripts/gen-static-helix.mjs), so no
+   slot is ever an empty band; the host drops it once the canvas has drawn. */
+.fig-slot { display: none; }
+@media (max-width: 999px) {
+  :root { --slot-h: min(112vw, 62svh); }
+  .stage { display: none; }
+  .fig-slot { display: block; position: relative; height: var(--slot-h); margin: 24px calc(-1 * var(--gutter)); overflow: hidden; }
+  /* The still sits on a layer of its own so it can fade: out while the live strand is on
+     screen in another slot (.is-quiet, stage.js), gone once this slot hosts the canvas. */
+  .fig-slot::before {
+    content: ''; position: absolute; inset: 0;
+    background: url("/three/still-helix.svg") 50% 50% / auto 100% no-repeat;
+    transition: opacity var(--dur-m) var(--ease);
+  }
+  #vision .fig-slot::before, #contact .fig-slot::before { background-image: url("/three/still-dial.svg"); }
+  .fig-slot.is-quiet::before { opacity: 0; }
+  .fig-slot.is-host::before { opacity: 0; transition: none; } /* the live canvas owns the moon */
+  .fig-slot > .stage-inner { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 1; transform: none; filter: none; transition: none; will-change: auto; }
+  .hud { display: none; }
+}
+
+/* ---------- By day ----------
+   On cream the stills print in the live strand's day palette (scene.js): graphite shades, a
+   brighter green for a lit region. Desktop: the fixed stage follows <html data-day>. The phone's
+   baked background stills (an image) are darkened instead; in a daylight section they are always on cream. */
+:root[data-day="1"] .poster { --sage: #3e9e62; }
+:root[data-day="1"] .poster .sa { --c: #4a4842; } :root[data-day="1"] .poster .sg { --c: #5b5952; }
+:root[data-day="1"] .poster .sc { --c: #75726a; } :root[data-day="1"] .poster .su { --c: #8b877d; }
+:root[data-day="1"] .poster .sb, :root[data-day="1"] .poster .cp { --c: #3b3934; }
+:root[data-day="1"] .poster .cp.sa { --c: #34322d; }
+:root[data-day="1"] .ph-p circle { fill: #4a9466; }
+:root[data-day="1"] .ph-p .rb { fill: #3d8a5c; }
+@media (max-width: 999px) {
+  .day .fig-slot::before { filter: brightness(.42) contrast(1.15); }
+}

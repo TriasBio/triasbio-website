@@ -1,0 +1,206 @@
+/* ==========================================================================
+   Design system. Three faces, one job each:
+   display = Instrument Serif (headlines, big numbers; never bold, never under 28px)
+   text    = Geist (nav, body, buttons, captions, labels)
+   mono    = Geist Mono (clock, hours, sequences, chart numbers only; never words)
+   Color comes from the light of the hour. Green means Trias: the button, active
+   states, and Trias data in charts. Red only marks toxicity in the dose chart.
+   ========================================================================== */
+
+/* Registered so the tone flip (night <-> cream noon) can transition. */
+@property --fg { syntax: '<color>'; inherits: true; initial-value: #f4f1ea; }
+@property --fg-2 { syntax: '<color>'; inherits: true; initial-value: rgba(244, 241, 234, .78); }
+@property --fg-3 { syntax: '<color>'; inherits: true; initial-value: rgba(244, 241, 234, .56); }
+@property --rule { syntax: '<color>'; inherits: true; initial-value: rgba(244, 241, 234, .14); }
+@property --surface { syntax: '<color>'; inherits: true; initial-value: rgba(255, 255, 255, .035); }
+@property --accent { syntax: '<color>'; inherits: true; initial-value: #8fc9a3; }
+@property --accent-ink { syntax: '<color>'; inherits: true; initial-value: #8fc9a3; }
+@property --on-accent { syntax: '<color>'; inherits: true; initial-value: #0b0d0c; }
+@property --data-trias { syntax: '<color>'; inherits: true; initial-value: #8fc9a3; }
+@property --data-comp { syntax: '<color>'; inherits: true; initial-value: #6f6f78; }
+@property --tox { syntax: '<color>'; inherits: true; initial-value: #f08f8f; }
+
+:root {
+  /* ---- Color: dark tone (night, dawn, dusk) ---- */
+  --bg: #07090f;
+  --fg: #f4f1ea;                        /* warm off-white */
+  --fg-2: rgba(244, 241, 234, .78);
+  --fg-3: rgba(244, 241, 234, .56);
+  --rule: rgba(244, 241, 234, .14);
+  --surface: rgba(255, 255, 255, .035);
+  --accent: #8fc9a3;                    /* sage: fills, active states */
+  --accent-ink: #8fc9a3;                /* sage as text on dark */
+  --on-accent: #0b0d0c;
+  --data-trias: #8fc9a3;
+  --data-comp: #6f6f78;                 /* comparator gray */
+  --tox: #f08f8f;                       /* toxicity only */
+  --sage-light: #8fc9a3;
+  --green-ink: #2f6b47;                 /* green text on light backgrounds */
+  --sun: #f1c062;                       /* clock glyph, hero ring, sheet dial, 3D dial */
+  --moon: #ece6d8;
+
+  /* ---- Type ---- */
+  --display: 'Instrument Serif', 'Iowan Old Style', Georgia, serif;
+  --text: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --mono: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  --fs-hero: clamp(48px, 11.5vw, 168px);
+  --fs-h2: clamp(36px, 5.5vw, 76px);
+  --fs-statement: clamp(44px, 8vw, 128px);
+  --fs-num: clamp(88px, 16vw, 240px);
+  --fs-num-s: clamp(88px, 9vw, 140px);  /* big numbers set three across (Why timing) */
+  --fs-body: 18px;
+  --lh-body: 1.6;
+  --fs-eyebrow: 13px;
+  --fs-small: 14px;
+  --fs-cite: 13px;
+  --fs-chart: 12px;                     /* chart labels: 12px minimum desktop, 11px phone */
+  --measure: 64ch;
+
+  /* ---- Layout ---- */
+  --gutter: clamp(16px, 4vw, 56px);
+  --maxw: 1280px;
+  --sec-pad: clamp(110px, 16vh, 180px);
+  --header-h: 64px;                     /* measured by core/scroll.js */
+
+  /* ---- Motion: one curve, 400 to 700 ms ---- */
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --dur-s: 400ms;
+  --dur-m: 550ms;
+  --dur-l: 700ms;
+
+  color-scheme: dark;
+  /* Short on purpose: chrome/sky.js swaps the ink at the midpoint of the light change. */
+  --ink-t: 0s;
+  transition: --fg var(--ink-t) linear, --fg-2 var(--ink-t) linear, --fg-3 var(--ink-t) linear,
+    --rule var(--ink-t) linear, --surface var(--ink-t) linear, --accent var(--ink-t) linear,
+    --accent-ink var(--ink-t) linear, --on-accent var(--ink-t) linear, --data-trias var(--ink-t) linear,
+    --data-comp var(--ink-t) linear, --tox var(--ink-t) linear;
+}
+
+/* Cream daylight. The .day sections (06:00 Platform to Traction) always carry these tokens; the
+   cream itself is painted under them by .daysky (results.css).
+   <html data-tone="light"> (chrome/sky.js) means that cream sits under the header, and then only
+   the fixed layers over it (header, clock menu, request form) take the dark ink. The rest of the
+   page keeps its own ink, so text below the sunset never turns dark on the dusk sky. */
+.day, :root[data-tone="light"] #topbar, :root[data-tone="light"] #sheet, :root[data-tone="light"] #request {
+  --fg: #15140f;
+  --fg-2: rgba(21, 20, 15, .78);
+  --fg-3: rgba(21, 20, 15, .62);       /* 4.8:1 on the warmest cream */
+  --rule: rgba(21, 20, 15, .14);
+  --surface: rgba(21, 20, 15, .04);
+  --accent: #2f6b47;
+  --accent-ink: #2f6b47;
+  --on-accent: #f4f1ea;
+  --data-trias: #2f6b47;
+  --data-comp: #b9b5ab;
+  --tox: #c24a4a;
+  --sun: #a8640f;
+  --moon: #3b382f;
+  color-scheme: light;
+}
+.day { --bg-now: #f4f1ea; }
+/* The figure caption sits on the stage, outside the sections: it takes dark ink while the
+   daylight is behind the strand (<html data-day>, chrome/sky.js). */
+:root[data-day="1"] .hud { --fg-2: rgba(21, 20, 15, .78); --fg-3: rgba(21, 20, 15, .62); }
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: var(--header-h); }
+[id] { scroll-margin-top: var(--header-h); }
+[data-jump-target]:focus { outline: none; }
+
+body {
+  margin: 0;
+  background: var(--bg);               /* chrome/sky.js paints the hour's color inline */
+  color: var(--fg);
+  font-family: var(--text);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+  font-variant-numeric: tabular-nums;
+}
+a { color: inherit; }
+::selection { background: var(--accent); color: var(--on-accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+img { max-width: 100%; }
+.mono { font-family: var(--mono); font-feature-settings: 'tnum' 1, 'zero' 1; }
+.skip { position: absolute; left: -9999px; }
+.skip:focus { left: 16px; top: calc(var(--header-h) + 8px); z-index: 100; background: var(--fg); color: var(--bg); padding: 8px 12px; border-radius: 6px; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+/* ---------- Layout ---------- */
+main { position: relative; z-index: 1; }
+.sec { position: relative; padding: var(--sec-pad) 0; }
+.wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 var(--gutter); }
+
+/* ---------- Eyebrow: the hour in mono, the label in text-face caps ---------- */
+.eyebrow { margin: 0 0 22px; display: flex; gap: 12px; align-items: baseline; }
+.eyebrow .t { font-family: var(--mono); font-size: var(--fs-eyebrow); color: var(--fg-2); font-feature-settings: 'tnum' 1, 'zero' 1; }
+.eyebrow .l { font-family: var(--text); font-size: var(--fs-eyebrow); font-weight: 500; text-transform: uppercase; letter-spacing: .06em; color: var(--fg-3); }
+
+/* ---------- Type ---------- */
+h1, h2, h3, h4 { margin: 0; }
+h1, h2 { font-family: var(--display); font-weight: 400; color: var(--fg); }
+h1 em, h2 em, .big-line em { font-style: italic; }
+h2 { font-size: var(--fs-h2); line-height: 1.02; letter-spacing: -0.015em; margin-bottom: 32px; text-wrap: balance; max-width: 22ch; }
+h2.display { font-size: var(--fs-statement); line-height: .95; max-width: none; }
+h3 { font-family: var(--text); font-size: 19px; font-weight: 600; letter-spacing: -0.01em; }
+p { margin: 0 0 16px; color: var(--fg-2); }
+.body-l { font-size: var(--fs-body); line-height: var(--lh-body); max-width: var(--measure); }
+.kw { color: var(--fg); font-weight: 500; }
+.cite { font-size: var(--fs-cite); color: var(--fg-3); margin-top: 8px; line-height: 1.5; }
+.cite a { color: var(--fg-2); text-decoration: none; border-bottom: 1px solid var(--rule); }
+.cite a:hover { color: var(--accent-ink); border-color: var(--accent-ink); }
+/* Touch: citation links get a 44px hit area without moving the layout. */
+@media (pointer: coarse) {
+  .cite a { display: inline-block; padding-block: 13px; margin-block: -13px;
+    border-bottom: 0; text-decoration: underline 1px var(--rule); text-underline-offset: 3px; }
+  .cite a:hover { text-decoration-color: var(--accent-ink); }
+}
+/* Instrument Serif's hyphen is wide; core/text.js and the hero wrap display hyphens in .hy. */
+.hy { margin-inline: -.05em; }
+.tag { font-size: var(--fs-eyebrow); font-weight: 500; text-transform: uppercase; letter-spacing: .06em; color: var(--fg-3); margin: 0 0 14px; }
+
+/* Big numbers: display face, tabular figures. */
+.num { font-family: var(--display); font-size: var(--fs-num); line-height: .85; letter-spacing: -0.03em; font-variant-numeric: tabular-nums lining-nums; color: var(--fg); margin: 0 0 24px; white-space: nowrap; }
+.num .of { font-size: max(28px, .3em); color: var(--fg-3); letter-spacing: 0; }
+.num .ch { display: inline-block; overflow: hidden; vertical-align: bottom; line-height: 1; padding-bottom: .04em; }
+.num .ch > span { display: inline-block; }
+
+/* Word mask for headline reveals (core/reveals.js). */
+.split .w { display: inline-block; overflow: hidden; vertical-align: top; padding: 0 .04em .12em; margin: 0 -.04em -.12em; }
+.split .w > span { display: inline-block; will-change: transform; }
+
+/* ---------- Buttons and links ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 48px; padding: 0 24px; border-radius: 999px; border: 0;
+  background: var(--accent); color: var(--on-accent);
+  font: 500 16px/1 var(--text); text-decoration: none; cursor: pointer;
+  transition: filter var(--dur-s) var(--ease), transform var(--dur-s) var(--ease);
+}
+.btn:hover { filter: brightness(1.08); }
+.btn:active { transform: translateY(1px); }
+.btn-sm { min-height: 38px; padding: 0 16px; font-size: 14.5px; }
+.text-link {
+  display: inline-flex; align-items: center; min-height: 44px;
+  color: var(--fg); text-decoration: none; font-size: 16px; font-weight: 450;
+  background: linear-gradient(currentColor, currentColor) 0 calc(50% + .75em) / 100% 1px no-repeat;
+  opacity: .82; transition: opacity var(--dur-s) var(--ease);
+}
+.text-link:hover { opacity: 1; }
+
+/* ---------- Phone ---------- */
+@media (max-width: 999px) {
+  :root { --sec-pad: 64px; --fs-body: 17px; --lh-body: 1.55; --fs-chart: 11px; }
+}
+
+/* "Pause motion" (clock sheet): CSS loops hold still; JS loops check state.paused. */
+.paused *, .paused *::before, .paused *::after { animation-play-state: paused !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
+}

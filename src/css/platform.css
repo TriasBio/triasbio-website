@@ -1,0 +1,222 @@
+/* Owner: platform. Anatomy steps (06:00), the dose chart (07:00), the data engine (09:00). */
+
+/* ---------- 06:00 Platform: intro + anatomy steps ---------- */
+.platform { padding-bottom: calc(var(--sec-pad) * .5); }
+.pf-col { max-width: 580px; }
+.pf-col sup { font-size: .62em; line-height: 0; }
+
+/* Desktop: the track is tall; the pinned panel stays put while the active step advances. */
+.anat { position: relative; height: calc(100svh - var(--header-h) + 165vh); margin-top: 8px; }
+.anat-pin { position: sticky; top: var(--header-h); height: calc(100svh - var(--header-h)); display: flex; align-items: center; align-items: safe center; }
+.anat-fig { display: none; }
+.anat-body { width: 100%; max-width: 580px; }
+.anat-tag { display: flex; align-items: baseline; gap: 14px; margin: 0 0 18px; }
+.anat-tag .l { font-size: var(--fs-eyebrow); font-weight: 500; text-transform: uppercase; letter-spacing: .06em; color: var(--fg-3); }
+.anat-tag .mono { font-size: var(--fs-eyebrow); color: var(--fg-3); }
+/* "mRNA" keeps its lowercase m inside the uppercase label. */
+.anat-tag .nc { text-transform: none; }
+.anat-list { list-style: none; margin: 0; padding: 0; }
+.anat-step {
+  position: relative; display: grid; grid-template-columns: 52px minmax(0, 1fr); padding: 15px 0;
+  border-left: 1px solid var(--rule);
+  transition: opacity var(--dur-m) var(--ease);
+}
+/* Dim only when JS lights the active step; without JS the list reads at full ink. */
+.js .anat-step { opacity: .38; }
+.anat-step::before {
+  content: ''; position: absolute; left: -1px; top: 12px; bottom: 12px; width: 2px; border-radius: 2px;
+  background: var(--accent); transform: scaleY(0); transform-origin: 50% 0; transition: transform var(--dur-m) var(--ease);
+}
+.anat-step.is-seen { opacity: .6; }
+.anat-step.is-on { opacity: 1; }
+.anat-step.is-on::before { transform: scaleY(1); }
+.anat-i { padding: 4px 0 0 20px; font-size: 13px; color: var(--fg-3); }
+.anat-step.is-on .anat-i { color: var(--accent-ink); }
+.anat-txt h3 { width: fit-content; font-size: 19px; line-height: 1.3; color: var(--fg); }
+.anat-txt p { margin: 4px 0 0; font-size: var(--fs-body); line-height: var(--lh-body); color: var(--fg-2); max-width: 46ch; }
+.anat-txt .anat-seq { margin-top: 8px; font-size: 13px; letter-spacing: .08em; color: var(--fg-3); white-space: nowrap; overflow: hidden; text-overflow: clip; }
+.anat-step.is-on .anat-seq { color: var(--accent-ink); }
+/* Click a step to light its region (platform.js scrolls to it). */
+.js .anat-step { cursor: pointer; }
+/* Over a region of the strand in the anatomy (platform.js sets the class). */
+.strand-hover, .strand-hover * { cursor: pointer !important; }
+.js .anat-step:not(.is-on):hover { opacity: .8; }
+.anat-btn { all: unset; cursor: pointer; }
+.anat-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+
+/* Short desktop screens: tighten the list so all five steps fit the pinned panel.
+   Up to 880px tall the spacing tightens; under 760px the text steps down as well. */
+@media (min-width: 1000px) and (max-height: 880px) {
+  .anat-tag { margin-bottom: 10px; }
+  .anat-step { padding: 8px 0; }
+  .anat-txt p { line-height: 1.5; }
+  .anat-txt .anat-seq { margin-top: 4px; }
+}
+@media (min-width: 1000px) and (max-height: 760px) {
+  .anat-txt h3 { font-size: 18px; }
+  .anat-txt p { font-size: 16px; line-height: 1.5; margin-top: 2px; }
+  .anat-txt .anat-seq { font-size: 12px; }
+}
+
+/* Optional leader line from the active label to its region on the strand (needs state.regionScreen). */
+.anat-leaders { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; overflow: visible; opacity: 0; transition: opacity var(--dur-s) var(--ease); }
+.anat-leaders.on { opacity: 1; }
+/* The line draws in from the label each time the step changes (platform.js resets the dash). */
+.ld-line {
+  fill: none; stroke: var(--accent); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round;
+  stroke-dasharray: 1; stroke-dashoffset: 0; transition: stroke-dashoffset .55s var(--ease);
+}
+.ld-line.reset { stroke-dashoffset: 1; transition: none; }
+.ld-start { fill: var(--accent); }
+.ld-dot { fill: var(--accent); stroke: var(--bg-now, var(--bg)); stroke-width: 2; }
+.ld-ring { fill: none; stroke: var(--accent); stroke-opacity: .7; stroke-width: 1.5; }
+
+/* ---------- 07:00 Dose chart: chart on the left 7/12, the strand on the right ---------- */
+.schedule .wrap { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; }
+.sched-col { grid-column: 1 / span 7; min-width: 0; }
+/* The italic sentence gets its own line, like every other two-sentence headline. */
+#schedule h2 em { display: block; }
+.sched-fig { display: none; }
+.chart { margin: 8px 0 0; padding: 20px 0 0; border: 0; border-top: 1px solid var(--rule); border-radius: 0; background: none; } /* editorial figure, like the rest of the page */
+.legend { display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 13px; color: var(--fg-2); margin-bottom: 6px; }
+.lg::before { content: ''; display: inline-block; width: 14px; height: 2px; border-radius: 2px; margin-right: 8px; vertical-align: middle; }
+.lg-untimed::before { background: var(--data-comp); }
+.lg-trias::before { background: var(--data-trias); height: 3px; }
+.lg-window::before { background: color-mix(in srgb, var(--data-trias) 26%, transparent); height: 10px; }
+.lg-tox::before { background: color-mix(in srgb, var(--tox) 30%, transparent); height: 10px; }
+.lg-ribo::before { width: 10px; height: 10px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #d6eadc, #93c8a5 60%, #5f9873); box-shadow: 0 0 6px rgb(147 200 165 / .6); }
+
+.plot { position: relative; }
+/* The partial ships baked stills (desktop and phone) for first paint and no-JS readers.
+   platform.js draws the live chart into #chart-svg, then marks the plot .built. */
+.plot:not(.built) .chart-bake-m { display: none; }
+html:not(.js) .dose { display: none; }
+.chart-svg { display: block; width: 100%; height: auto; overflow: visible; --cfs: 12px; }
+.chart-svg text { font-size: var(--cfs); }
+.chart-svg .band-win { fill: var(--data-trias); fill-opacity: .09; }
+.chart-svg .band-tox { fill: var(--tox); fill-opacity: .1; }
+.chart-svg .grid { stroke: var(--rule); stroke-width: 1; }
+.chart-svg .grid.minor { stroke-dasharray: 2 4; }
+.chart-svg .base { stroke: var(--fg-3); stroke-opacity: .6; stroke-width: 1; }
+.chart-svg .ax { font-family: var(--mono); fill: var(--fg-3); }
+.chart-svg .ax.under { opacity: 0; }
+.chart-svg .ylab { font-family: var(--text); fill: var(--fg-3); }
+.chart-svg .c-u { fill: none; stroke: var(--data-comp); stroke-width: 2; stroke-linejoin: round; }
+.chart-svg .c-utox { fill: none; stroke: var(--tox); stroke-width: 2.5; stroke-linejoin: round; }
+.chart-svg .c-t { fill: none; stroke: var(--data-trias); stroke-width: 2.75; stroke-linejoin: round; }
+.chart-svg .dl { font-family: var(--text); font-weight: 500; fill: var(--fg-2); paint-order: stroke; stroke: var(--bg-now, var(--bg)); stroke-width: 4px; stroke-linejoin: round; }
+.chart-svg .dose-line { stroke: var(--fg-2); stroke-width: 1.25; stroke-dasharray: 3 3; }
+.chart-svg .dose-tri { fill: var(--fg-2); }
+.chart-svg .dose-lab { font-family: var(--text); font-weight: 500; fill: var(--fg-2); }
+.chart-svg .play-line { stroke: var(--fg); stroke-opacity: .32; stroke-width: 1; }
+.chart-svg .play-dot { fill: var(--fg-3); stroke: var(--bg-now, var(--bg)); stroke-width: 2; transition: fill var(--dur-s) var(--ease); }
+.chart-svg .play-pill rect { fill: var(--bg-now, var(--bg)); stroke: var(--fg-3); stroke-width: 1; transition: fill var(--dur-s) var(--ease), stroke var(--dur-s) var(--ease); }
+.chart-svg .play-pill text { font-family: var(--mono); fill: var(--fg); transition: fill var(--dur-s) var(--ease); }
+.chart-svg .play.live .play-dot { fill: var(--data-trias); }
+.chart-svg .play.live .play-line { stroke: var(--data-trias); stroke-opacity: .6; }
+.chart-svg .play.live .play-pill rect { fill: var(--accent); stroke: var(--accent); }
+.chart-svg .play.live .play-pill text { fill: var(--on-accent); }
+
+.chart-foot { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; margin-top: 14px; }
+.dose { display: grid; gap: 2px; font-size: 15px; color: var(--fg-2); }
+.dose b { color: var(--fg); font-weight: 500; }
+/* Slider: a 22px visible thumb inside a 44px touch target (transparent border). */
+#dose { -webkit-appearance: none; appearance: none; width: 100%; height: 44px; margin: 0; background: transparent; cursor: pointer; }
+#dose:focus { outline: none; }
+#dose:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 22px; }
+#dose::-webkit-slider-runnable-track { height: 2px; background: var(--fg-3); border-radius: 2px; }
+#dose::-moz-range-track { height: 2px; background: var(--fg-3); border-radius: 2px; }
+#dose::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none; box-sizing: border-box; width: 44px; height: 44px; margin-top: -21px;
+  border-radius: 50%; border: 11px solid transparent; background: var(--fg) padding-box;
+  box-shadow: inset 0 0 0 0 transparent;
+}
+#dose::-moz-range-thumb { box-sizing: border-box; width: 44px; height: 44px; border-radius: 50%; border: 11px solid transparent; background: var(--fg) padding-box; }
+.readout p { margin: 0 0 4px; font-size: 15px; line-height: 1.5; color: var(--fg-2); }
+/* The untimed line and hidden copies of its longer forms share one grid cell, so the
+   readout always holds the height of its longest sentence and never reflows the page. */
+.ro-stack { display: grid; }
+.ro-stack > p { grid-area: 1 / 1; }
+.ro-ghost { visibility: hidden; }
+.readout b { color: var(--fg); font-weight: 500; }
+.readout .who { color: var(--fg); font-weight: 600; }
+.sw { display: inline-block; width: 14px; height: 2px; border-radius: 2px; margin: 0 8px 0 0; vertical-align: middle; }
+.sw-untimed { background: var(--data-comp); }
+.sw-trias { background: var(--data-trias); height: 3px; }
+.chart .cite { margin: 12px 0 0; font-size: 12px; }
+
+/* ---------- 09:00 Data engine ---------- */
+.engine-wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 56px; align-items: center; }
+.facts { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--rule); max-width: 560px; }
+.facts li { padding: 18px 0; border-bottom: 1px solid var(--rule); color: var(--fg-2); font-size: var(--fs-body); line-height: var(--lh-body); }
+.facts b { color: var(--fg); font-weight: 600; }
+.loop { margin: 0; color: var(--accent); }
+/* --px = viewBox units per rendered CSS px (set by platform.js from the rendered width;
+   the values here are close fallbacks), so label sizes below are real rendered px. */
+.loop svg { display: block; width: 100%; height: auto; overflow: visible; --px: .86; }
+.loop-arc { fill: none; stroke: var(--accent); stroke-width: 1.5; stroke-linecap: round; stroke-dasharray: 4 6; animation: pf-flow 1.4s linear infinite; }
+@keyframes pf-flow { to { stroke-dashoffset: -20; } }
+.loop-k { font-family: var(--text); font-size: calc(14px * var(--px)); fill: var(--fg-2); }
+.node-bg { fill: var(--bg-now, var(--bg)); }
+.node-glow { fill: var(--accent); opacity: 0; }
+.node-ring { fill: none; stroke: var(--accent); stroke-width: 1.4; }
+.node text { font-family: var(--text); font-size: calc(17px * var(--px)); font-weight: 600; fill: var(--fg); }
+.plate { fill: var(--surface); stroke: var(--rule); stroke-width: 1; }
+.well { fill: var(--accent); fill-opacity: .1; }
+.plate-h { font-family: var(--mono); font-size: calc(13px * var(--px)); fill: var(--fg-3); }
+.pulse-dot { fill: var(--accent); }
+.loop .cite { margin: 4px auto 0; font-size: 12px; text-align: center; }
+
+/* ---------- Phone ---------- */
+@media (max-width: 999px) {
+  .platform { padding-bottom: 48px; }
+  .pf-col { max-width: none; }
+
+  /* Two columns, as on desktop: the steps on the left, the strand pinned on the right while they
+     scroll past. The strand's column runs into the right gutter so the helix gets the room. */
+  .anat { height: auto; margin-top: 8px; }
+  .anat-pin {
+    position: static; height: auto; display: grid;
+    grid-template-columns: minmax(0, 1fr) clamp(132px, 40vw, 360px); column-gap: 8px; align-items: start;
+  }
+  .anat-body { grid-column: 1; grid-row: 1; max-width: none; padding-bottom: 8px; }
+  .anat-fig {
+    grid-column: 2; grid-row: 1; display: block; position: sticky; top: var(--header-h);
+    height: calc(100svh - var(--header-h)); margin-right: calc(-1 * var(--gutter)); z-index: 0;
+  }
+  .anat-fig .fig-slot { height: 100%; margin: 0; }
+  /* The column is tall and narrow: the stills fit its width (centered), never its height. */
+  .anat-fig .fig-slot::before { background-size: contain; }
+  .anat-fig .poster { width: 100%; height: auto; top: 50%; transform: translate(-50%, -50%); }
+  .anat-tag { margin: 8px 0 6px; flex-wrap: wrap; row-gap: 2px; }
+  /* Each step holds the screen long enough to read while its region stays lit. */
+  .anat-step { grid-template-columns: 30px minmax(0, 1fr); padding: 26px 0; min-height: 46svh; align-content: start; }
+  .anat-step:last-child { min-height: 56svh; }
+  .anat-i { padding-left: 10px; font-size: 12px; }
+  .anat-step.is-seen { opacity: .45; }
+  .anat-txt h3 { font-size: 18px; }
+  .anat-txt p { font-size: 16px; line-height: 1.5; }
+  .anat-leaders { display: none; }
+
+  .schedule .wrap { display: block; }
+  /* One strand on phones: the 06:00 anatomy strand carries the section, and 07:00 is the chart
+     alone (.sched-fig and its strand slot stay hidden, as on desktop, where the fixed strand
+     shows the ribosomes). The legend swatch and caption lines about the strand go with it. */
+  .lg-ribo, .cap-strand { display: none; }
+  .ph-status { display: flex; align-items: center; gap: 10px; margin: 10px 0 0; font-size: 14px; color: var(--fg-2); min-height: 22px; }
+  .ph-status b { font-weight: 500; color: var(--fg); font-size: 14px; }
+  .ph-dot { width: 9px; height: 9px; border-radius: 50%; border: 1.5px solid var(--fg-3); flex: none; transition: background var(--dur-s) var(--ease), border-color var(--dur-s) var(--ease); }
+  .ph-status.live .ph-dot { background: var(--accent); border-color: var(--accent); }
+  .chart { padding: 16px 0 0; }
+  .legend { font-size: 13px; gap: 6px 16px; }
+  .readout p { font-size: 15px; }
+  .plot:not(.built) .chart-bake-m { display: block; }
+  .plot:not(.built) #chart-svg { display: none; }
+
+  .engine-wrap { grid-template-columns: 1fr; gap: 32px; }
+        /* Rendered px at any phone width (the diagram scales to about 0.7 at 360 to 375px). */
+  .loop svg { --px: 1.4; }
+  .loop-k { font-size: calc(12px * var(--px)); }
+  .node text { font-size: calc(12.5px * var(--px)); }
+  .plate-h { font-size: calc(12px * var(--px)); }
+}

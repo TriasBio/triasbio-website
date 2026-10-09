@@ -1,0 +1,77 @@
+<!-- 04:00 and 05:00 · nav group "Why timing" · Owner: why. -->
+<section class="sec why" id="why" data-time="4" data-group="why">
+  <div class="wrap">
+    <!-- One screen on desktop: the claim and its three numbers land together. -->
+    <div class="why-screen">
+      <div class="why-head">
+        <p class="eyebrow"><span class="t">04:00</span><span class="l">Why timing</span></p>
+        <h2 class="split why-h">Your body runs on a 24-hour clock. <em>So does every drug’s effect.</em></h2>
+      </div>
+      <div class="why-stats">
+        <div class="stat">
+          <p class="stat-n">75%</p>
+          <p class="stat-t">of 106 clinical trials that compared dosing times found the drug’s efficacy or toxicity depended on the hour.</p>
+          <p class="cite"><a href="https://www.science.org/doi/10.1126/science.aax7621" target="_blank" rel="noopener">Ruben et al., Science 2019 ↗</a></p>
+        </div>
+        <div class="stat">
+          <p class="stat-n">1.5M</p>
+          <p class="stat-t">patients in a COVID-19 vaccine study. Effectiveness moved 8.6% to 25% with the hour of the shot, and morning boosters cut hospitalizations against evening ones (HR 0.64).</p>
+          <p class="cite"><a href="https://www.jci.org/articles/view/167339" target="_blank" rel="noopener">Hazan et al., J Clin Invest 2023 ↗</a></p>
+        </div>
+        <div class="stat">
+          <p class="stat-n">56 <span class="of">of 100</span></p>
+          <p class="stat-t">best-selling US drugs target the product of a gene that rises and falls across the day.</p>
+          <p class="cite">Zhang et al., PNAS 2014</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Disease keeps time too: a 24-hour strip drawn like the clock.
+         The labels say only what the sources say (morning, night); the hours come from the axis alone.
+         Desktop: labels hang either side of their hour. Phone: the same strip, labels in two tiers. -->
+    <figure class="dstrip">
+      <h3 class="dstrip-h" data-reveal>Disease keeps time too.</h3>
+      <div class="ds-plot" role="img" aria-label="A 24-hour day from 00:00 to 24:00. Asthma is worst at night, marked near 04:00. Heart attacks and strokes peak in the morning, drawn as a band from 06:00 to 12:00.">
+        <div class="ds-axis" aria-hidden="true">
+          <span class="ds-line"></span>
+          <span class="ds-ticks"></span>
+          <span class="ds-hr" style="--h:0"><svg class="ds-ico" viewBox="0 0 14 14"><path d="M11.2 9.3A5 5 0 0 1 4.7 2.8 5 5 0 1 0 11.2 9.3Z" fill="currentColor"/></svg><b>00:00</b></span>
+          <span class="ds-hr" style="--h:6"><svg class="ds-ico" viewBox="0 0 14 14"><path d="M4 10.4a3 3 0 0 1 6 0Z" fill="currentColor"/><path d="M1.4 10.4h11.2M7 3.4v1.5M2.9 5.6l1.06 1.06M11.1 5.6l-1.06 1.06" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" fill="none"/></svg><b>06:00</b></span>
+          <span class="ds-hr" style="--h:12"><svg class="ds-ico" viewBox="0 0 14 14"><circle cx="7" cy="7" r="2.6" fill="currentColor"/><path d="M7 1.2v1.5M7 11.3v1.5M1.2 7h1.5M11.3 7h1.5M2.9 2.9l1.06 1.06M10.04 10.04l1.06 1.06M2.9 11.1l1.06-1.06M10.04 3.96l1.06-1.06" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" fill="none"/></svg><b>12:00</b></span>
+          <span class="ds-hr" style="--h:18"><svg class="ds-ico" viewBox="0 0 14 14"><path d="M4 10.4a3 3 0 0 1 6 0Z" fill="currentColor"/><path d="M1.4 10.4h11.2M7 3.4v1.5M2.9 5.6l1.06 1.06M11.1 5.6l-1.06 1.06" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" fill="none"/></svg><b>18:00</b></span>
+          <span class="ds-hr" style="--h:24"><svg class="ds-ico" viewBox="0 0 14 14"><path d="M11.2 9.3A5 5 0 0 1 4.7 2.8 5 5 0 1 0 11.2 9.3Z" fill="currentColor"/></svg><b>24:00</b></span>
+        </div>
+        <span class="ds-band" style="--a:6;--b:12" aria-hidden="true"></span>
+        <span class="ds-mark" style="--h:4" aria-hidden="true"></span>
+        <span class="ds-lab ds-lab-mark" style="--h:4" aria-hidden="true"><span class="ds-k">Asthma is worst</span><span class="ds-v">at night</span></span>
+        <span class="ds-lab ds-lab-band" style="--h:6" aria-hidden="true"><span class="ds-k">Heart attacks and strokes peak</span><span class="ds-v">in the morning</span></span>
+      </div>
+      <figcaption class="ds-cap" data-reveal>Ruan, Yuan, Eltzschig, Nat Rev Drug Discov 2021. Positions are approximate.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="sec mrna" id="mrna" data-time="5" data-group="why">
+  <div class="wrap mrna-wrap">
+    <div class="mrna-copy">
+      <p class="eyebrow"><span class="t">05:00</span><span class="l">Why timing</span></p>
+      <h2 class="split">Short-lived drugs feel the clock most. <em>mRNA is short-lived.</em></h2>
+      <p class="body-l" data-reveal>Across those 106 trials, drugs with half-lives under 15 hours showed time-dependent effects far more often than longer-acting ones.</p>
+      <p class="body-l" data-reveal>mRNA’s short life is usually counted as its weakness. <b class="kw">It is also what makes timing programmable.</b></p>
+    </div>
+    <figure class="halflife">
+      <figcaption class="hl-title">Trials showing a <span class="nw">time-of-day</span> effect, by drug <span class="nw">half-life</span></figcaption>
+      <div class="hl-plot" role="img" aria-label="85% of trials for drugs with half-lives under 15 hours showed a time-of-day effect, against 39% for drugs with half-lives of 15 hours or more.">
+        <div class="hl-row hl-hi" style="--w:.85;--d:0" aria-hidden="true">
+          <span class="hl-k">Half-life under 15 h</span><b class="hl-v">85%</b>
+          <span class="hl-bar"><i></i></span>
+        </div>
+        <div class="hl-row hl-lo" style="--w:.39;--d:1" aria-hidden="true">
+          <span class="hl-k">Half-life 15 h or more</span><b class="hl-v">39%</b>
+          <span class="hl-bar"><i></i></span>
+        </div>
+      </div>
+      <p class="cite hl-cap">Ruben et al., Science 2019. Small molecules and biologics. The study did not include mRNA drugs.</p>
+    </figure>
+  </div>
+</section>

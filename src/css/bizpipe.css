@@ -1,0 +1,71 @@
+/* Owner: bizpipe. The daylight section (#business): thesis, value band, traction. Scrolls normally. */
+
+/* ==========================================================================
+   Thesis: one timeline, a green band that widens as a program advances.
+   Desktop: three columns, band runs left to right through the middle row.
+   Phone: three rows, band runs top to bottom in a left column.
+   ========================================================================== */
+.business .body-l { max-width: 640px; margin-bottom: 14px; }
+/* The italic phrase gets its own line: "Trias’s sequence" / "travels inside the drug." */
+.biz-h { max-width: none; }
+.biz-h em { display: block; }
+.biz-fig { position: relative; margin: 56px 0 0; }
+.biz-phases {
+  list-style: none; margin: 0; padding: 0; position: relative;
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.biz-phase {
+  display: grid; grid-template-rows: auto 260px auto; align-content: start;
+  padding: 0 28px; border-left: 1px solid var(--rule);
+}
+.biz-phase:first-child { padding-left: 0; border-left: 0; }
+.biz-head { display: flex; align-items: baseline; gap: 14px; margin: 0; color: var(--fg); }
+/* Phase numbers stay neutral: the band is the only green here. */
+.biz-n { font-size: 13px; color: var(--fg-3); }
+.biz-name { font-family: var(--display); font-weight: 400; font-size: clamp(32px, 3.1vw, 46px); line-height: 1; letter-spacing: -0.01em; }
+.biz-desc { margin: 4px 0 0; font-size: 16.5px; line-height: 1.5; max-width: 30ch; }
+.biz-fig figcaption { margin-top: 28px; }
+
+/* ==========================================================================
+   Traction (14:00): the live download count beside who buys today, one ruled row.
+   The count's own styles (.r-hf*) live in results.css with the rest of the daylight.
+   ========================================================================== */
+.traction { margin-top: clamp(48px, 7vh, 72px); }
+/* Under the count: the open model is the first proof of concept, not what Trias sells. */
+.r-hf-note { margin-top: 14px; max-width: 46ch; font-size: 15px; line-height: 1.5; color: var(--fg-2); }
+.tr-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px 64px; align-items: end; }
+.tr-cust { padding-top: 20px; border-top: 1px solid var(--rule); }
+.tr-k { margin: 0 0 10px; font-size: var(--fs-eyebrow); font-weight: 500; text-transform: uppercase; letter-spacing: .06em; color: var(--fg-3); }
+.tr-v { margin: 0; font-family: var(--display); font-weight: 400; font-size: clamp(28px, 2.6vw, 38px); line-height: 1.15; letter-spacing: -0.01em; color: var(--fg); max-width: 22ch; }
+
+/* The band. Coordinates are real CSS pixels (no viewBox), so nothing scales or distorts. */
+.biz-svg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.biz-svg .b-s0 { stop-color: var(--data-trias); stop-opacity: .5; }
+.biz-svg .b-s1 { stop-color: var(--data-trias); stop-opacity: .72; }
+.biz-svg .b-s2 { stop-color: var(--data-trias); stop-opacity: 1; }
+.biz-svg .b-axis { stroke: var(--rule); stroke-width: 1; stroke-dasharray: 2 5; fill: none; }
+.biz-svg .b-edge { stroke: var(--data-trias); stroke-width: 1.25; fill: none; stroke-linejoin: round; }
+.biz-svg .b-dot { fill: var(--fg); transform-box: fill-box; transform-origin: center; transition: transform var(--dur-s) var(--ease), opacity var(--dur-s) var(--ease); }
+.biz-svg .b-dot.off { opacity: 0; transform: scale(.2); }
+.biz-svg .b-start { fill: var(--data-trias); }
+
+
+/* ---------- Phone ---------- */
+@media (max-width: 999px) {
+  .biz-fig { margin-top: 40px; }
+  .biz-phases { grid-template-columns: minmax(0, 1fr); }
+  .biz-phase {
+    grid-template-columns: 96px minmax(0, 1fr); grid-template-rows: auto auto; column-gap: 20px;
+    padding: 26px 0; border-left: 0; border-top: 1px solid var(--rule);
+  }
+  .biz-phase:first-child { border-top: 0; padding-top: 6px; }
+  .biz-slot { grid-column: 1; grid-row: 1 / span 2; }
+  .biz-head, .biz-desc { grid-column: 2; }
+  .biz-head { flex-direction: column; gap: 8px; }
+  .biz-name { font-size: 32px; }
+  .biz-desc { margin-top: 10px; font-size: 16px; }
+  .biz-fig figcaption { margin-top: 24px; }
+  .traction { margin-top: 40px; }
+  .tr-grid { grid-template-columns: minmax(0, 1fr); gap: 40px; }
+  .tr-v { font-size: 26px; }
+}

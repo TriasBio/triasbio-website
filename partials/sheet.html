@@ -1,0 +1,35 @@
+<!-- Owner: chrome. The clock menu: a 24-hour dial with each section at its hour (00:00 at the
+     top, clockwise). The list below is the real navigation; the dial is drawn from it.
+     The foot stays pinned: "Pause motion" (stops every ambient loop on the page, remembered)
+     and the "Request a design" button. -->
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title" hidden>
+  <div class="sheet-scrim" data-close></div>
+  <div class="sheet-card">
+    <div class="sheet-head">
+      <p class="sheet-title" id="sheet-title">Sections by hour</p>
+      <button class="sheet-close" type="button" data-close aria-label="Close">
+        <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8"/></svg>
+      </button>
+    </div>
+    <div class="sheet-body">
+      <div class="dial-wrap">
+        <svg class="dial" id="dial" viewBox="-100 -100 200 200" aria-hidden="true" focusable="false"></svg>
+      </div>
+      <ol class="sheet-list">
+        <li><a href="#top" data-h="0"><span class="h">00:00</span><span class="l">Re-timing medicine</span></a></li>
+        <li><a href="#care" data-h="3"><span class="h">03:00</span><span class="l">Why timing</span></a></li>
+        <li><a href="#platform" data-h="6"><span class="h">06:00</span><span class="l">Platform</span></a></li>
+        <li><a href="#business" data-h="12"><span class="h">12:00</span><span class="l">Traction</span></a></li>
+        <li><a href="#team" data-h="18"><span class="h">18:00</span><span class="l">Team</span></a></li>
+        <li><a href="#vision" data-h="22"><span class="h">22:00</span><span class="l">Vision</span></a></li>
+      </ol>
+    </div>
+    <div class="sheet-foot">
+      <button class="sheet-pause" type="button" aria-pressed="false">
+        <span class="sp-l">Pause motion</span>
+        <span class="sp-sw" aria-hidden="true"></span>
+      </button>
+      <a class="btn sheet-cta" href="#contact" data-action="request">Request a design</a>
+    </div>
+  </div>
+</div>

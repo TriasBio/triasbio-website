@@ -1,0 +1,96 @@
+/* Owner: bizpipe. The page's daylight, 06:00 to about 17:00: one layer (.daysky, in index.html)
+   from the top of #platform (.day-first) to the bottom of #business (.day-last). It paints a sunrise
+   band, cream day and sunset band. chrome/sky.js sets its top and height from those two sections;
+   it sits under the 3D stage, so the strand stays visible over the light. base.css gives the .day
+   sections the dark-on-cream tokens. Also the live Hugging Face count (.r-hf*). */
+
+/* The bands are color only, with no text on them: each lives in its section's padding. They start
+   transparent, so they meet whatever the page sky is at that hour without a seam, and run crimson,
+   coral, peach into cream. --band is read by chrome/sky.js. */
+:root { --band: clamp(480px, 100vh, 1000px); --cream: #f4f1ea; }
+.daysky {
+  position: absolute; left: 0; right: 0; top: 0; height: 0; z-index: 0; pointer-events: none;
+  background:
+    linear-gradient(to bottom,
+      rgb(45 31 54 / 0) 0, rgb(104 36 72 / .75) 14%, #a8415a 30%, #cf6466 46%, #e8977f 62%,
+      #f2c3a6 78%, #f4e4d2 90%, var(--cream) 100%) top / 100% var(--band) no-repeat,
+    linear-gradient(to top,
+      rgb(37 23 51 / 0) 0, rgb(100 35 70 / .8) 14%, #a8415a 30%, #cf6466 46%, #e8977f 62%,
+      #f2c3a6 78%, #f2e3cf 90%, var(--cream) 100%) bottom / 100% var(--band) no-repeat,
+    linear-gradient(var(--cream), var(--cream)) center / 100% calc(100% - 2 * var(--band) + 2px) no-repeat;
+  /* The same sky with more stops, blended in oklab: no visible steps between colors. Browsers
+     that cannot read "in oklab" keep the declaration above. */
+  background:
+    linear-gradient(in oklab to bottom,
+      rgb(45 31 54 / 0) 0, rgb(72 30 62 / .5) 9%, rgb(112 38 74 / .82) 18%, #983c5a 28%, #b44f5f 38%,
+      #cc6667 48%, #df8676 58%, #eaa58b 67%, #f0c2a4 76%, #f3d9c2 85%, #f4e8da 93%, var(--cream) 100%) top / 100% var(--band) no-repeat,
+    linear-gradient(in oklab to top,
+      rgb(37 23 51 / 0) 0, rgb(68 28 60 / .55) 9%, rgb(108 37 72 / .85) 18%, #983c5a 28%, #b44f5f 38%,
+      #cc6667 48%, #df8676 58%, #eaa58b 67%, #f0c2a4 76%, #f3d9c2 85%, #f4e8da 93%, var(--cream) 100%) bottom / 100% var(--band) no-repeat,
+    linear-gradient(var(--cream), var(--cream)) center / 100% calc(100% - 2 * var(--band) + 2px) no-repeat;
+}
+.sec.day-first { padding-top: calc(var(--band) + clamp(96px, 13vh, 140px)); }
+.sec.day-last { padding-bottom: calc(var(--band) + clamp(40px, 6vh, 72px)); }
+
+/* ---------- The sun ---------- */
+/* One box per band. Its lower part is haze: a mask fades the sun out over the bottom of the band,
+   so the sun climbs out of the haze (and sinks back into it) with no hard horizon line. The sun's
+   offset (--y), color (--sun-c) and opacity (--o) are written by bizpipe.js from scroll position. */
+.day-hz {
+  position: absolute; left: 0; right: 0; height: var(--band); overflow: hidden; pointer-events: none; z-index: 0;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 52%, rgb(0 0 0 / .55) 72%, rgb(0 0 0 / .15) 86%, transparent 97%);
+  mask-image: linear-gradient(to bottom, #000 0, #000 52%, rgb(0 0 0 / .55) 72%, rgb(0 0 0 / .15) 86%, transparent 97%);
+}
+.day-hz-rise { top: 0; }
+.day-hz-set { bottom: 0; }
+/* The sun as light, not an object: a small overexposed core with a soft edge (::after) inside a wide
+   warm bloom that lifts the sky around it (::before). The element itself is only the box bizpipe.js
+   moves; its size is the core's. Low on the horizon --sun-c runs red-orange, so the rim and bloom warm. */
+.day-sun {
+  --d: clamp(56px, 6vw, 96px);
+  --sun-c: #ffb46a;
+  position: absolute; left: 64%; top: 0; width: var(--d); height: var(--d); margin-left: calc(var(--d) / -2);
+  transform: translate3d(0, var(--y, 120vh), 0);
+  opacity: var(--o, 1);
+  will-change: transform;
+}
+.day-sun::before, .day-sun::after { content: ''; position: absolute; left: 50%; top: 50%; border-radius: 50%; transform: translate(-50%, -50%); }
+.day-sun::before {
+  width: calc(var(--d) * 5.5); height: calc(var(--d) * 5.5);
+  background: radial-gradient(circle,
+    color-mix(in srgb, #fff2da 62%, transparent) 0%,
+    color-mix(in srgb, var(--sun-c) 34%, transparent) 16%,
+    color-mix(in srgb, var(--sun-c) 14%, transparent) 36%,
+    color-mix(in srgb, var(--sun-c) 3%, transparent) 54%,
+    transparent 70%);
+}
+.day-sun::after {
+  width: 100%; height: 100%;
+  background: radial-gradient(circle,
+    #fffdf7 0%, #fff8ea 38%,
+    color-mix(in srgb, var(--sun-c) 35%, #fff4df) 54%,
+    color-mix(in srgb, var(--sun-c) 30%, transparent) 64%,
+    transparent 72%);
+  filter: blur(1.5px);
+}
+
+/* ---------- Live Hugging Face count (14:00) ---------- */
+/* The count fills its column without overflowing (cqi: the column's width). */
+.r-hf { margin: 0; padding-top: 20px; border-top: 1px solid var(--rule); display: grid; gap: 6px; justify-items: start; container-type: inline-size; }
+.r-hf-line { font-size: var(--fs-body, 17px); line-height: 1.45; color: var(--fg-2); }
+.r-hf-num { display: block; font-family: var(--display); font-weight: 400; font-size: min(var(--fs-num), 42cqi); line-height: .85; letter-spacing: -0.03em; font-variant-numeric: tabular-nums lining-nums; color: var(--fg); margin: 0 0 18px; white-space: nowrap; }
+.r-hf .cite { margin: 0; }
+/* The dot's space is reserved from the first paint, so the live state fades in without moving
+   the line. bizpipe.js adds .no-live if the count cannot be fetched, which drops the space. */
+.r-live { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--data-trias); margin-right: 8px; vertical-align: 2px; opacity: 0; transition: opacity var(--dur-m) var(--ease); }
+.r-hf.is-live .r-live { opacity: 1; animation: r-pulse 2.4s var(--ease) infinite; }
+.r-hf.no-live .r-live { display: none; }
+@keyframes r-pulse { 0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--data-trias) 45%, transparent); } 60% { box-shadow: 0 0 0 6px transparent; } }
+
+/* ---------- Phone and tablet: sized to content, no dead bands ---------- */
+@media (max-width: 999px) {
+  .day-sun { left: 72%; }
+  :root { --band: clamp(320px, 62svh, 560px); }
+  .sec.day-first { padding-top: calc(var(--band) + var(--sec-pad)); }
+  .sec.day-last { padding-bottom: calc(var(--band) + 24px); }
+}

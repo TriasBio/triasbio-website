@@ -1,0 +1,194 @@
+/* Owner: team. Team (18:00). Every selector is scoped to .team.
+   Founders lead with one line in large text; the full bio sits behind "More".
+   Without JS (or if team.js fails) the bios stay open and the buttons stay hidden. */
+
+.team .founders {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 56px clamp(32px, 4.5vw, 72px);
+  align-items: start;   /* a card never stretches to its neighbour's height, so its own layout stays put */
+  margin: 8px 0 88px;
+}
+
+/* ---------- One founder ---------- */
+.team .person {
+  display: grid;
+  grid-template-columns: minmax(0, 0.82fr) minmax(0, 1fr);
+  grid-template-rows: auto auto auto auto 1fr auto;   /* text top-aligns; spare portrait height falls below More */
+  grid-template-areas:
+    "pic name"
+    "pic role"
+    "pic lead"
+    "pic more"
+    "pic ."
+    "bio bio";
+  column-gap: 28px;
+  align-items: start;
+}
+.team .portrait-link { grid-area: pic; display: block; align-self: start; }
+.team .portrait-link:hover .portrait { opacity: .88; }
+.team .person-name a { color: inherit; text-decoration: none; background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size var(--dur-s) var(--ease); }
+.team .person-name a:hover, .team .person:has(.portrait-link:hover) .person-name a { background-size: 100% 1px; }
+.team .person-name a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+.team .portrait {
+  grid-area: pic; transition: opacity var(--dur-s) var(--ease); display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover;
+  border-radius: 10px; background: var(--surface);
+}
+.team .person-name {
+  grid-area: name; margin: 0 0 8px;
+  font-family: var(--display); font-weight: 400; font-size: clamp(30px, 2.6vw, 36px);
+  line-height: 1.04; letter-spacing: -0.01em; color: var(--fg); text-wrap: balance;
+}
+/* From 640px up both names fit on one line (36px max in a 288px column), so the two cards match. */
+@media (min-width: 640px) { .team .person-name { white-space: nowrap; } }
+.team .nb { white-space: nowrap; }
+.team .person-role {
+  grid-area: role; margin: 0;
+  font: 500 var(--fs-eyebrow)/1.3 var(--text); text-transform: uppercase; letter-spacing: .06em; color: var(--fg-3);
+}
+.team .person-lead {
+  grid-area: lead; margin: 20px 0 0;
+  font: 400 22px/1.36 var(--text); letter-spacing: -0.012em; color: var(--fg); text-wrap: pretty;
+}
+.team .person-lead > span { display: block; }
+
+/* "More": a quiet outlined pill. Hidden until team.js wires it up. */
+.team .more {
+  grid-area: more; justify-self: start; display: none;
+  align-items: center; gap: 10px; min-height: 44px; margin-top: 22px; padding: 0 16px 0 18px;
+  border: 1px solid var(--rule); border-radius: 999px; background: transparent; color: var(--fg);
+  font: 500 15px/1 var(--text); cursor: pointer;
+  transition: border-color var(--dur-s) var(--ease), background-color var(--dur-s) var(--ease);
+}
+.team .more:hover { border-color: var(--fg-3); background: var(--surface); }
+.team .more:focus-visible { border-radius: 999px; }   /* base gives focused elements a 4px radius; keep the pill */
+.team .more svg { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; transition: transform var(--dur-m) var(--ease); }
+.team .more[aria-expanded="true"] svg { transform: rotate(180deg); }
+.team.has-more .more { display: inline-flex; }
+
+/* The disclosure: rows animate 0fr to 1fr, the text inside fades up 8px. */
+.team .bio { grid-area: bio; }
+.team .bio-in { padding-top: 28px; }
+.team .bio p { font-size: var(--fs-body); line-height: var(--lh-body); color: var(--fg-2); max-width: var(--measure); margin: 0 0 16px; text-wrap: pretty; }
+.team .bio .prev { font-size: 14px; line-height: 1.5; color: var(--fg-3); border-top: 1px solid var(--rule); padding-top: 14px; margin: 20px 0 0; }
+
+.team.has-more .bio {
+  display: grid; grid-template-rows: 0fr; visibility: hidden;
+  transition: grid-template-rows var(--dur-m) var(--ease), visibility 0s linear var(--dur-m);
+}
+.team.has-more .bio-in { min-height: 0; overflow: hidden; }
+.team.has-more .bio-in > * { opacity: 0; transform: translateY(8px); transition: opacity var(--dur-s) var(--ease), transform var(--dur-s) var(--ease); }
+.team.has-more .is-open .bio {
+  grid-template-rows: 1fr; visibility: visible;
+  transition: grid-template-rows var(--dur-m) var(--ease), visibility 0s;
+}
+.team.has-more .is-open .bio-in > * { opacity: 1; transform: none; transition-duration: var(--dur-l); transition-delay: 120ms; }
+.team.has-more .is-open .bio-in > .prev { transition-delay: 200ms; }
+
+/* ---------- Advisors: small circles in a row ---------- */
+.team .team-sub {
+  margin: 0 0 18px;
+  font: 500 var(--fs-eyebrow)/1.3 var(--text); text-transform: uppercase; letter-spacing: .06em; color: var(--fg-3);
+}
+.team .advisors {
+  list-style: none; margin: 0 0 80px; padding: 26px 0 0; border-top: 1px solid var(--rule);
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px clamp(28px, 3vw, 48px);
+}
+.team .advisor { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 18px; align-items: start; }
+.team .advisor img { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; background: var(--surface); display: block; }
+.team .advisor p { margin: 0; }
+.team .advisor-name { font: 500 var(--fs-body)/1.3 var(--text); color: var(--fg); letter-spacing: -0.005em; padding-top: 4px; }
+.team .advisor-aff { font-size: 14px; line-height: 1.4; color: var(--fg-3); margin-top: 3px !important; }
+.team .advisor-d { font-size: var(--fs-body); line-height: var(--lh-body); color: var(--fg-2); margin-top: 10px !important; max-width: 34ch; text-wrap: pretty; }
+
+/* ---------- Investors, then programs and awards ----------
+   One band of equal cells, investors first. Each logo is a one-color mask (public/backers/,
+   cut from the pitch deck) painted in the ink color, so seven brands read as one set and
+   follow the page tone. --w and --h size each logo to about the same ink area, so a tall
+   mark and a long wordmark weigh the same; --k scales the set per breakpoint. */
+.team .backers { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 4fr); gap: 0 48px; }
+.team .logos {
+  list-style: none; margin: 0; padding: 0; display: grid;
+  border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+}
+.team .logos-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.team .logos-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.team .logos li { display: flex; align-items: center; justify-content: center; height: 128px; padding: 0 12px; }
+.team .logos li + li { border-left: 1px solid var(--rule); }
+.team .logo {
+  --k: .9;
+  display: block; flex: none;
+  width: min(calc(var(--w) * var(--k)), 100%); height: calc(var(--h) * var(--k));
+  background: var(--fg-2);
+  -webkit-mask: var(--src) center / contain no-repeat; mask: var(--src) center / contain no-repeat;
+  transition: background-color var(--dur-s) var(--ease);
+}
+.team .logos li:hover .logo { background: var(--fg); }
+/* Investors lead: a size up and full ink. */
+.team .logos-3 .logo { --k: 1.08; background: var(--fg); }
+.team .strip {
+  list-style: none; margin: 0; padding: 16px 0 0;
+  display: flex; flex-wrap: wrap; gap: 8px 28px;
+}
+.team .strip li { font: 500 14px/1.3 var(--text); letter-spacing: 0; color: var(--fg-3); }
+
+/* ---------- Tablet and narrow desktop: two columns, portrait over the text ---------- */
+@media (min-width: 640px) and (max-width: 1199px) {
+  .team .person {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto;
+    grid-template-areas: "pic" "name" "role" "lead" "more" "bio";
+  }
+  .team .portrait { max-width: 260px; margin-bottom: 24px; }
+}
+
+/* ---------- Phone and tablet ---------- */
+@media (max-width: 999px) {
+  .team .founders { gap: 56px 32px; margin: 4px 0 64px; }
+  .team .person-lead { font-size: 20px; line-height: 1.4; }
+  .team .more { margin-top: 16px; }
+  .team .bio-in { padding-top: 20px; }
+
+  /* Advisors: a stacked list with name and affiliation */
+  .team .advisors { grid-template-columns: 1fr; gap: 0; padding: 0; margin-bottom: 56px; }
+  .team .advisor { grid-template-columns: 52px minmax(0, 1fr); gap: 16px; padding: 18px 0; }
+  .team .advisor + .advisor { border-top: 1px solid var(--rule); }
+  .team .advisor img { width: 52px; height: 52px; }
+  .team .advisor-name { padding-top: 2px; }
+  .team .advisor-d { margin-top: 6px !important; max-width: none; }
+
+  .team .backers { grid-template-columns: 1fr; gap: 40px; }
+  .team .logos li { height: 104px; }
+  .team .logo { --k: .78; }
+  .team .logos-3 .logo { --k: .92; }
+  .team .strip { gap: 8px 22px; padding-top: 14px; }
+}
+
+/* ---------- Phone: one column, a small portrait beside the name ---------- */
+@media (max-width: 639px) {
+  .team .logos-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .team .logos-4 li:nth-child(3) { border-left: 0; }
+  .team .logos-4 li:nth-child(n + 3) { border-top: 1px solid var(--rule); }
+  .team .logos li { height: 92px; padding: 0 8px; }
+  .team .logo { --k: .66; }
+  .team .logos-3 .logo { --k: .7; }
+  .team .founders { grid-template-columns: 1fr; }
+  .team .person {
+    grid-template-columns: clamp(112px, 32vw, 160px) minmax(0, 1fr);
+    grid-template-rows: 1fr auto auto auto auto auto;
+    grid-template-areas:
+      "pic ."
+      "pic name"
+      "pic role"
+      "lead lead"
+      "more more"
+      "bio bio";
+    column-gap: 18px;
+  }
+  .team .person-name { font-size: 30px; margin-bottom: 6px; }
+  .team .more { margin-top: 14px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .team.has-more .bio, .team.has-more .is-open .bio,
+  .team.has-more .bio-in > *, .team .more svg { transition: none !important; }
+}

@@ -1,0 +1,32 @@
+<!-- Hero intro bootstrap. Owner: hero. Runs before first paint and decides intro vs settled
+     (a class on <html>), so the first frame is already right. Without JS neither class is
+     set and the settled hero shows. If src/hero/hero.js has not started within 3 s, the
+     failsafe reveals the settled state.
+     It also holds the hero copy hidden (.hero-hold) until Instrument Serif has loaded, capped
+     at 800 ms, so the headline never paints in the fallback serif and then reflows. This runs
+     after the font stylesheet (inline scripts wait for it), so the @font-face rules exist. -->
+<script>
+(function () {
+  var d = document.documentElement, intro = true;
+  try { if (localStorage.getItem('trias:intro-seen')) intro = false; } catch (e) {}
+  try { if (localStorage.getItem('trias:paused') === '1') intro = false; } catch (e) {}
+  try { if (matchMedia('(prefers-reduced-motion: reduce)').matches) intro = false; } catch (e) {}
+  if (location.hash.length > 1) intro = false;
+  d.classList.add(intro ? 'hero-intro' : 'hero-settled');
+  if (intro) window.__heroFailsafe = setTimeout(function () {
+    if (window.__heroStarted) return;
+    d.classList.remove('hero-intro');
+    d.classList.add('hero-settled');
+  }, 3000);
+
+  var f = document.fonts, faces = ['1em "Instrument Serif"', 'italic 1em "Instrument Serif"'];
+  var loaded = function () { try { return faces.every(function (x) { return f.check(x); }); } catch (e) { return true; } };
+  if (!f || !f.load || loaded()) { window.__heroFonts = Promise.resolve(true); return; }
+  d.classList.add('hero-hold');
+  var fonts = Promise.all([f.load(faces[0], 'Re-timing medicine.'), f.load(faces[1], 'medicine.')]).then(loaded, function () { return false; });
+  window.__heroFonts = fonts; // hero.js: the intro waits on this (longer) before it lands the words
+  var release = function () { d.classList.remove('hero-hold'); };
+  fonts.then(release, release);
+  setTimeout(release, 800);
+})();
+</script>

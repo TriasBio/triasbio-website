@@ -1,0 +1,19 @@
+{
+  "name": "triasbio-site-public",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "helix": "node scripts/gen-static-helix.mjs"
+  },
+  "devDependencies": {
+    "vite": "^8.3.2"
+  },
+  "dependencies": {
+    "gsap": "^3.15.0",
+    "three": "^0.186.1"
+  }
+}

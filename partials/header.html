@@ -1,0 +1,23 @@
+<!-- Owner: chrome. No bar at the top of the hero; once scrolled, a translucent bar tinted by
+     the hour. Ink follows the tone underneath (and the hero's sky while its intro runs).
+     Ships with .at-hero: the header's green button stays hidden on the first screen, where
+     the hero carries its own (chrome/header.js removes the class below the hero). -->
+<header class="topbar at-hero" id="topbar">
+  <a class="brand" href="#top" aria-label="TriasBio, back to top">
+    <img class="logo" src="/logo-56.png" srcset="/logo-56.png 56w, /logo-112.png 112w" sizes="28px" width="28" height="28" alt="">
+    <span class="brand-name">TriasBio</span>
+  </a>
+  <nav class="nav" aria-label="Main">
+    <a href="#care" data-group="why"><span class="nav-l">Why timing</span><span class="nav-h" aria-hidden="true"><span class="nav-dot">·</span><span class="nav-t">03:00</span></span></a>
+    <a href="#platform" data-group="platform"><span class="nav-l">Platform</span><span class="nav-h" aria-hidden="true"><span class="nav-dot">·</span><span class="nav-t">06:00</span></span></a>
+    <a href="#business" data-group="business"><span class="nav-l">Traction</span><span class="nav-h" aria-hidden="true"><span class="nav-dot">·</span><span class="nav-t">12:00</span></span></a>
+    <a href="#team" data-group="team"><span class="nav-l">Team</span><span class="nav-h" aria-hidden="true"><span class="nav-dot">·</span><span class="nav-t">18:00</span></span></a>
+  </nav>
+  <a class="btn btn-sm nav-cta" href="#contact" data-action="request">Request a design</a>
+  <!-- The clock is always visible. It is also the menu: it opens the 24-hour dial. -->
+  <button class="clock" id="clock-btn" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="sheet" aria-label="Sections by hour. Now 00:00">
+    <svg class="clock-icon sky-icon" id="clock-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"></svg>
+    <span class="clock-time" id="clock">00:00</span>
+    <svg class="clock-chev" viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M3 4.75 6 7.75l3-3"/></svg>
+  </button>
+</header>

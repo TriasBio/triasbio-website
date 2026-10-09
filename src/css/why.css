@@ -1,0 +1,204 @@
+/* Owner: why. Why care (03:00), Why timing (04:00) and Why mRNA (05:00). */
+
+/* ==========================================================================
+   04:00 · One screen on desktop: the claim and its three numbers together.
+   ========================================================================== */
+.sec.why { padding-top: 0; }
+.why-screen {
+  min-height: calc(100vh - var(--header-h));
+  min-height: calc(100svh - var(--header-h));
+  display: flex; flex-direction: column; justify-content: center;
+  gap: clamp(40px, 7.5vh, 80px);
+  padding: clamp(40px, 7vh, 72px) 0;
+}
+.why-h { max-width: none; margin: 0; }
+.why-h em { display: block; }
+.why-head .eyebrow { margin-bottom: clamp(16px, 2.6vh, 24px); }
+
+.why-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--rule); }
+.stat { padding: clamp(22px, 3.6vh, 34px) clamp(20px, 2.6vw, 40px) 0; border-left: 1px solid var(--rule); }
+.stat:first-child { padding-left: 0; border-left: 0; }
+/* Big numbers set three across: the secondary step of the number scale. */
+.stat-n {
+  font-family: var(--display); font-weight: 400;
+  font-size: var(--fs-num-s);
+  line-height: .9; letter-spacing: -0.025em; white-space: nowrap;
+  font-variant-numeric: lining-nums tabular-nums;
+  color: var(--fg); margin: 0 0 clamp(16px, 2.6vh, 26px);
+}
+.stat-n .of { font-size: max(28px, .32em); letter-spacing: 0; color: var(--fg-3); }
+.stat-n .ch { display: inline-block; overflow: hidden; vertical-align: bottom; line-height: 1; padding: 0 .02em .06em; margin: 0 -.02em -.06em; }
+.stat-n .ch > span { display: inline-block; }
+.stat-t { font-size: var(--fs-body); line-height: var(--lh-body); color: var(--fg-2); max-width: 34ch; margin: 0 0 12px; text-wrap: pretty; }
+.stat .cite { margin: 0; }
+.stat-t .nw { white-space: nowrap; }
+/* ==========================================================================
+   Disease keeps time too · a 24-hour strip drawn like the clock.
+   Every position comes from an hour (--h, or --a to --b) and --p, the share of
+   the day drawn so far (0..1, scroll-linked; 1 when JS or motion is off).
+   The labels carry no hours: the sources give only "night" and "morning".
+   ========================================================================== */
+.dstrip { margin: clamp(16px, 3vh, 40px) 0 0; }
+.dstrip-h {
+  font-family: var(--display); font-weight: 400; color: var(--fg);
+  font-size: clamp(30px, 2.9vw, 42px); line-height: 1.05; letter-spacing: -0.01em;
+  margin: 0 0 clamp(24px, 3.4vh, 36px);
+}
+.ds-plot {
+  --p: 1;
+  --in: 22px;                                     /* inset so end labels center on their ticks */
+  --span: calc(100% - 2 * var(--in));
+  --line: 70px;                                   /* y of the hour line */
+  --P: calc(var(--p) * 24);                       /* hours drawn so far */
+  position: relative; height: 128px;
+  font-family: var(--text);
+}
+.ds-axis { position: absolute; inset: 0; }
+.ds-line {
+  position: absolute; left: var(--in); top: var(--line); width: var(--span); height: 1px;
+  background: var(--fg-3); transform-origin: 0 50%; transform: scaleX(var(--p));
+}
+/* Hour ticks: one per hour, taller every six hours. */
+.ds-ticks {
+  position: absolute; left: var(--in); top: var(--line); width: calc(var(--span) + 1px); height: 11px;
+  background:
+    repeating-linear-gradient(to right, var(--fg-3) 0 1px, transparent 1px calc((100% - 1px) / 4)) 0 0 / 100% 11px no-repeat,
+    repeating-linear-gradient(to right, var(--rule) 0 1px, transparent 1px calc((100% - 1px) / 24)) 0 0 / 100% 6px no-repeat;
+  clip-path: inset(0 calc((1 - var(--p)) * 100%) 0 0);
+}
+.ds-hr {
+  --k: clamp(0, calc(var(--P) - var(--h) + 1), 1);
+  position: absolute; top: calc(var(--line) + 20px);
+  left: calc(var(--in) + var(--h) / 24 * var(--span));
+  transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 7px;
+  font: 400 var(--fs-chart)/1 var(--mono); font-feature-settings: 'tnum' 1, 'zero' 1;
+  color: var(--fg-3); white-space: nowrap; opacity: var(--k);
+}
+.ds-hr b { font-weight: 400; }
+/* Sun and moon, as on the clock: moon at night, half-risen sun at 06:00 and 18:00. */
+.ds-ico { display: block; flex: none; width: 14px; height: 14px; color: var(--fg-3); }
+
+/* Heart attacks and strokes: a lit stretch of the line, like the ring's lit segment. */
+.ds-band {
+  --len: clamp(0, calc(var(--P) - var(--a)), calc(var(--b) - var(--a)));
+  position: absolute; top: calc(var(--line) - 3px); height: 7px; border-radius: 4px;
+  left: calc(var(--in) + var(--a) / 24 * var(--span));
+  width: calc(var(--len) / 24 * var(--span));
+  background: var(--fg);
+}
+/* Asthma: one point on the line. */
+.ds-mark {
+  --k: clamp(0, calc((var(--P) - var(--h)) * 1.5), 1);
+  position: absolute; top: var(--line); left: calc(var(--in) + var(--h) / 24 * var(--span));
+  width: 11px; height: 11px; border-radius: 50%; background: var(--fg);
+  box-shadow: 0 0 0 3px var(--bg-now, var(--bg));
+  transform: translate(-50%, -50%) scale(var(--k));
+}
+/* Labels hang from a hairline stem: asthma to the left of its point, the band to the right of its start. */
+.ds-lab {
+  --k: clamp(0, calc((var(--P) - var(--h)) * 1.2), 1);
+  position: absolute; top: 0; height: calc(var(--line) - 9px);
+  display: flex; flex-direction: column; gap: 4px; white-space: nowrap;
+  opacity: var(--k); transform: translateY(calc((1 - var(--k)) * 8px));
+}
+.ds-lab::after { content: ''; position: absolute; top: 2px; bottom: 0; width: 1px; background: var(--fg-3); }
+.ds-lab-mark { right: calc(100% - var(--in) - var(--h) / 24 * var(--span)); padding-right: 12px; text-align: right; align-items: flex-end; }
+.ds-lab-mark::after { right: 0; }
+.ds-lab-band { left: calc(var(--in) + var(--h) / 24 * var(--span)); padding-left: 12px; }
+.ds-lab-band::after { left: 0; }
+.ds-k { font-size: 14px; line-height: 1.25; font-weight: 500; color: var(--fg); }
+.ds-v { font-size: 14px; line-height: 1.25; color: var(--fg-2); }
+.ds-cap { font-size: 12px; line-height: 1.5; color: var(--fg-3); margin-top: 12px; max-width: 72ch; }
+
+/* ==========================================================================
+   05:00 · Why mRNA. A forward beat for the 3D strand: on desktop the copy and
+   the half-life figure share one left column, so the right half stays clear
+   for the strand. The short-lived group (where mRNA sits) is the highlighted
+   ink; the other is comparator gray. Green stays reserved for Trias data.
+   ========================================================================== */
+.mrna-wrap > * { max-width: min(580px, 46vw); }
+.mrna-copy .body-l { max-width: 56ch; }
+.halflife { margin: clamp(36px, 5vh, 52px) 0 0; padding-top: 14px; border-top: 1px solid var(--rule); }
+.hl-title { font-size: 13px; font-weight: 500; line-height: 1.4; color: var(--fg); margin: 0 0 20px; text-wrap: pretty; }
+.hl-title .nw { white-space: nowrap; }
+.hl-plot { display: grid; gap: 18px; }
+.hl-row {
+  --g: clamp(0, calc(var(--grow, 1) * 1.3 - var(--d) * .3), 1);
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; row-gap: 8px;
+}
+.hl-k { font-size: 14px; line-height: 1.3; color: var(--fg-2); }
+.hl-hi .hl-k { color: var(--fg); }
+.hl-v { font: 500 15px/1 var(--mono); font-feature-settings: 'tnum' 1, 'zero' 1; color: var(--fg); }
+.hl-lo .hl-v { color: var(--fg-2); }
+.hl-bar {
+  grid-column: 1 / -1; position: relative; display: block; height: 18px; border-radius: 3px;
+  background: color-mix(in srgb, var(--fg) 7%, transparent);
+}
+.hl-bar i { position: absolute; inset: 0 auto 0 0; width: calc(var(--w) * var(--g) * 100%); border-radius: 3px; background: var(--fg); }
+.hl-lo .hl-bar i { background: var(--data-comp); }
+.halflife .hl-cap { margin: 16px 0 0; }
+
+/* ==========================================================================
+   Phone: everything stacks. The strip stays horizontal and compact: the two
+   labels sit in tiers above the line (asthma on top, so its stem passes left
+   of the band's label).
+   ========================================================================== */
+@media (max-width: 999px) {
+  .sec.why { padding-top: var(--sec-pad); }
+  .why-screen { min-height: 0; display: block; padding: 0; }
+  .why-h em { display: inline; }
+  .why-head { margin-bottom: 36px; }
+  .why-stats { grid-template-columns: 1fr; }
+  .stat, .stat:first-child { padding: 26px 0 30px; border-left: 0; }
+  .stat + .stat { border-top: 1px solid var(--rule); }
+  .stat-n { font-size: var(--fs-num); margin-bottom: 16px; }
+  .stat-t { max-width: none; }
+
+  .dstrip { margin-top: 8px; padding-top: 32px; border-top: 1px solid var(--rule); }
+  .dstrip-h { font-size: 30px; margin-bottom: 20px; }
+  .ds-plot { --in: 18px; --line: 90px; --tier: 46px; height: 142px; }
+  .ds-hr { top: calc(var(--line) + 19px); gap: 6px; }
+  .ds-lab, .ds-lab-mark, .ds-lab-band {
+    right: auto; left: calc(var(--in) + var(--h) / 24 * var(--span));
+    padding: 0 0 0 10px; text-align: left; align-items: flex-start; gap: 3px;
+  }
+  .ds-lab::after, .ds-lab-mark::after, .ds-lab-band::after { left: 0; right: auto; }
+  .ds-lab-mark { top: 0; height: calc(var(--line) - 8px); }
+  .ds-lab-band { top: var(--tier); height: calc(var(--line) - 8px - var(--tier)); }
+  .ds-k, .ds-v { font-size: clamp(13px, 3.75vw, 14px); }        /* the band label fits 288px at 320 */
+
+  .mrna-wrap > * { max-width: 640px; }                         /* tablets: keep the bars a readable length */
+  .halflife { margin-top: 40px; }
+  .hl-title { margin-bottom: 18px; }
+}
+
+/* ---------- 03:00 Why care (markup in care.html): two mirrored groups of two ----------
+   Each item: an arrow in a ring, a large serif word, one line of text. Every column is the same
+   width and every row starts on the same line, so the four read as one set. */
+.care-h { max-width: none; }
+.care-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 clamp(40px, 5vw, 80px); margin-top: clamp(48px, 7vh, 72px); }
+.care-g {
+  margin: 0; padding-bottom: 14px; border-bottom: 1px solid var(--rule);
+  font-size: var(--fs-eyebrow); font-weight: 500; text-transform: uppercase; letter-spacing: .06em; color: var(--fg-3);
+}
+.care-items { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(24px, 3vw, 40px); }
+.care-item { padding-top: 28px; }
+.care-k {
+  margin: 0; display: flex; align-items: center; gap: 14px;
+  font-family: var(--display); font-weight: 400; font-size: clamp(34px, 3.4vw, 50px); line-height: 1; letter-spacing: -0.01em; color: var(--fg);
+}
+.care-arrow {
+  flex: none; display: grid; place-items: center; width: .9em; height: .9em; border-radius: 50%;
+  border: 1.5px solid var(--accent); color: var(--accent-ink);
+}
+.care-arrow svg { width: 58%; height: 58%; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.care-d { margin: 16px 0 0; font-size: 16.5px; line-height: 1.5; color: var(--fg-2); max-width: 30ch; }
+
+@media (max-width: 999px) {
+  .care-grid { grid-template-columns: minmax(0, 1fr); row-gap: 48px; margin-top: 36px; }
+  .care-items { gap: 20px; }
+  .care-item { padding-top: 22px; }
+  .care-k { font-size: 32px; gap: 10px; }
+  .care-d { font-size: 15.5px; }
+}
