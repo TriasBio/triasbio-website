@@ -1,7 +1,5 @@
 # TriasBio website: public version
 
-Cloned 2026-10-05 from `../(C) TriasBio Website (Investor)/` and cut down so it gives competitors nothing to copy. Results keeps only the public Hugging Face download count; all company wet-lab data is gone. It has its own Vercel project (`triasbio-public`) and no GitHub remote, so nothing here can overwrite the investor site.
-
 The marketing site for TriasBio: mRNA medicines that make their protein at the right hour.
 
 The page reads as one day. Scrolling moves a clock from 00:00 at the top to 24:00 at the bottom, and the sky changes with it: night, dawn, magenta morning, cream noon in Results, dusk, and night again. A 3D mRNA strand follows along and changes form by section (strand, anatomy, protein in its window, 24-hour dial).
@@ -23,7 +21,7 @@ Then open http://localhost:5173.
 
 ## Deploying
 
-Run `vercel deploy --prod` from this folder. It deploys to the `triasbio-public` Vercel project. Never link it to `triasbio-site`, which serves the investor version. Delete the `.env.local` that `vercel link` creates.
+Run `vercel deploy --prod` from this folder. It deploys to the `triasbio-public` Vercel project. Delete the `.env.local` that `vercel link` creates.
 
 ## Where things live
 

@@ -1,6 +1,5 @@
 // Owner: bizpipe. The suns in the daylight bands (.daysky) and the 12:00 Traction count (#business).
-// The value band (initBusiness) draws only where a .biz-fig exists: the investor site keeps it,
-// the public site has none.
+// The value band (initBusiness) draws only where a .biz-fig exists; this page has none.
 // The suns: one climbs out of the sunrise band's horizon above Platform, and the sunset band's
 // horizon below Traction rises over the other.
 // Traction: the open model's all-time Hugging Face downloads, fetched live; the figure in the HTML
