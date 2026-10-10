@@ -1,0 +1,92 @@
+name: deploy
+
+# Builds the site and publishes it to S3 + CloudFront (terraform/). The dev
+# branch deploys to dev.triasbio.com, main to www.triasbio.com, each in the
+# GitHub environment of the same name. Per environment, from `terraform output`:
+#   secret     AWS_ROLE_ARN                 <- deploy_role_arn
+#   variables  ASSET_BUCKET_NAME            <- bucket_name
+#              CLOUDFRONT_DISTRIBUTION_ID   <- distribution_id
+#              SITE_URL                     https://dev.triasbio.com or
+#                                           https://www.triasbio.com, for the
+#                                           smoke check; leave unset in prod
+#                                           until www has moved to this site
+
+on:
+  push:
+    branches: [dev, main]
+  workflow_dispatch: {}
+
+concurrency: deploy-${{ github.ref_name }}
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref_name == 'main' && 'prod' || 'dev' }}
+
+    env:
+      AWS_REGION: us-west-2
+      ASSET_BUCKET_NAME: ${{ vars.ASSET_BUCKET_NAME }}
+      CLOUDFRONT_DISTRIBUTION_ID: ${{ vars.CLOUDFRONT_DISTRIBUTION_ID }}
+      SITE_URL: ${{ vars.SITE_URL }}
+
+    steps:
+      # An empty role-to-assume makes the AWS action retry the default
+      # credential chain for ~90s and then fail without naming what was unset.
+      - name: Check deploy configuration
+        env:
+          DEPLOY_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
+        run: |
+          missing=""
+          [ -n "$DEPLOY_ROLE_ARN" ] || missing="$missing AWS_ROLE_ARN(secret)"
+          [ -n "$ASSET_BUCKET_NAME" ] || missing="$missing ASSET_BUCKET_NAME"
+          [ -n "$CLOUDFRONT_DISTRIBUTION_ID" ] || missing="$missing CLOUDFRONT_DISTRIBUTION_ID"
+          if [ -n "$missing" ]; then
+            echo "::error::Unset on this GitHub environment:$missing"
+            exit 1
+          fi
+
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run build
+        env:
+          VITE_APP_URL: ${{ github.ref_name == 'main' && 'https://app.triasbio.com' || 'https://app.dev.triasbio.com' }}
+
+      # After the build, so npm lifecycle scripts never run with bucket access.
+      - uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      # Only Vite's content-hashed output under assets/ may be cached for a
+      # year. index.html and the files copied from public/ keep stable names,
+      # so they revalidate on every request (CloudFront answers 304 when the
+      # ETag is unchanged).
+      - name: Sync to S3
+        run: |
+          aws s3 sync dist/assets "s3://${ASSET_BUCKET_NAME}/assets" \
+            --cache-control 'public,max-age=31536000,immutable'
+          aws s3 sync dist/ "s3://${ASSET_BUCKET_NAME}" \
+            --exclude 'assets/*' \
+            --cache-control 'no-cache'
+
+      # The entry document only: hashed assets get new names on every build.
+      - name: Invalidate CloudFront
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id "$CLOUDFRONT_DISTRIBUTION_ID" \
+            --paths '/' '/index.html'
+
+      - name: Smoke check
+        if: env.SITE_URL != ''
+        run: curl -fsS -o /dev/null "${SITE_URL}/"

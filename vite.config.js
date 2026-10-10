@@ -26,6 +26,11 @@ function partials() {
   };
 }
 
+// The mRNA design app (TriasBio/frontend), linked as "Log in". Vite fills
+// %VITE_APP_URL% in the HTML; the deploy workflow sets the dev app for the dev
+// branch.
+process.env.VITE_APP_URL ||= 'https://app.triasbio.com';
+
 export default defineConfig({
   plugins: [partials()],
   build: { target: 'es2022' },
