@@ -52,13 +52,13 @@ variable "price_class" {
 }
 
 variable "github_repo" {
-  description = "GitHub repository, as <org>/<repo>, allowed to assume the deploy role."
+  description = "GitHub repository allowed to assume the deploy role, exactly as it appears in the `sub` claim of GitHub's OIDC token. For this repo GitHub includes the numeric owner and repo IDs: <org>@<org-id>/<repo>@<repo-id>."
   type        = string
-  default     = "TriasBio/triasbio-website"
+  default     = "TriasBio@212801005/triasbio-website@1412503440"
 
   validation {
-    condition     = can(regex("^[\\w.-]+/[\\w.-]+$", var.github_repo))
-    error_message = "Must be <org>/<repo>."
+    condition     = can(regex("^[\\w.-]+(@\\d+)?/[\\w.-]+(@\\d+)?$", var.github_repo))
+    error_message = "Must be <org>/<repo> or <org>@<org-id>/<repo>@<repo-id>."
   }
 }
 
