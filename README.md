@@ -4,7 +4,7 @@ The marketing site for TriasBio: mRNA medicines that make their protein at the r
 
 The page reads as one day. Scrolling moves a clock from 00:00 at the top to 24:00 at the bottom, and the sky changes with it: night, dawn, magenta morning, cream noon in Results, dusk, and night again. A 3D mRNA strand follows along and changes form by section (strand, anatomy, protein in its window, 24-hour dial).
 
-**Live:** https://triasbio-public.vercel.app
+**Live:** https://www.triasbio.com (prod, `main`) and https://dev.triasbio.com (dev, `dev`)
 
 ## Run it locally
 
@@ -21,7 +21,36 @@ Then open http://localhost:5173.
 
 ## Deploying
 
-Run `vercel deploy --prod` from this folder. It deploys to the `triasbio-public` Vercel project. Delete the `.env.local` that `vercel link` creates.
+Pushing to `dev` deploys to dev.triasbio.com; merging into `main` deploys to www.triasbio.com. `.github/workflows/deploy.yml` builds the site, uploads `dist/` to a private S3 bucket and refreshes CloudFront. The hosting itself (bucket, CloudFront, certificate, the deploy role) is Terraform in `terraform/`, one root module for both AWS accounts:
+
+```bash
+cd terraform
+terraform init -backend-config=environments/dev.backend.hcl
+terraform apply -var-file=environments/dev.tfvars
+
+terraform init -reconfigure -backend-config=environments/prod.backend.hcl
+terraform apply -var-file=environments/prod.tfvars
+```
+
+After the first apply in an environment, copy `deploy_role_arn` (secret `AWS_ROLE_ARN`), `bucket_name` (variable `ASSET_BUCKET_NAME`) and `distribution_id` (variable `CLOUDFRONT_DISTRIBUTION_ID`) from `terraform output` into the GitHub environment of the same name (`dev` or `prod`), and set `SITE_URL` for the post-deploy check.
+
+The mRNA design app (TriasBio/frontend) has its own domain: app.dev.triasbio.com and app.triasbio.com. The header and footer "Log in" links go there directly (`VITE_APP_URL`, set per branch in the deploy workflow; local builds link to app.triasbio.com). CloudFront also redirects `/app` and `/app/*` on this site there, without the `/app` prefix, for bookmarks from when the app was served under www.triasbio.com/app.
+
+### DNS
+
+dev.triasbio.com is a Route 53 zone in the dev account, and Terraform writes its records. triasbio.com is hosted at **GoDaddy** together with the Google Workspace email records, so prod records are added there by hand. Only ever add or edit records named `www`, `app` or starting with `_`. The `@` records (MX, the SPF TXT, the forwarding A records), `google._domainkey` and `_dmarc` carry email and the bare-domain redirect, and must not change.
+
+### Prod cutover
+
+`www.triasbio.com` was first served by the app's CloudFront Distribution. Moving it to this site, without downtime:
+
+1. Apply prod with `attach_certificate = false` and `serve_site_domain = false`. Test the site on `distribution_domain_name`.
+2. In GoDaddy, add the CNAME from `certificate_validation_records` (Name without the trailing `.triasbio.com.`). Wait for the certificate to show as Issued in ACM (us-east-1), then set `attach_certificate = true` and apply.
+3. In GoDaddy, add a TXT record named `_www` whose value is `distribution_domain_name`, then move the name: `aws cloudfront associate-alias --target-distribution-id <distribution_id> --alias www.triasbio.com`.
+4. Set `serve_site_domain = true` and apply, so Terraform records the alias.
+5. In GoDaddy, point the `www` CNAME at `distribution_domain_name`, then delete the `_www` TXT record.
+
+CloudFront routes by hostname, so www.triasbio.com follows the alias the moment step 3 runs, whichever Distribution the CNAME names. Rolling back therefore means moving the alias back: set `serve_site_domain = false` and apply, point `_www` at the previous Distribution, and run `associate-alias` with that Distribution's id.
 
 ## Where things live
 
