@@ -12,4 +12,4 @@ manage_dns = false
 
 # Turned on in order during the cutover (README.md, "Prod cutover").
 attach_certificate = true
-serve_site_domain  = false
+serve_site_domain  = true
