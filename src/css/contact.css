@@ -14,6 +14,13 @@
 .vision h2.display { font-size: min(var(--fs-statement), calc(var(--col-w) / 5.15)); max-width: none; margin-bottom: 36px; }
 .vision .body-l { max-width: 44ch; margin: 0; }
 
+/* Today vs. in development: two short lists under the vision line. */
+.status { display: grid; grid-template-columns: 1fr 1fr; gap: 0 32px; margin-top: 40px; }
+.status-col { border-top: 1px solid var(--rule); padding-top: 14px; }
+.status-k { margin: 0 0 10px; font-size: var(--fs-eyebrow); font-weight: 500; text-transform: uppercase; letter-spacing: .06em; color: var(--fg-3); }
+.status ul { list-style: none; margin: 0; padding: 0; }
+.status li { font-size: var(--fs-small); line-height: 1.5; color: var(--fg-2); margin: 0 0 8px; text-wrap: pretty; }
+
 /* ---------- Contact · 24:00 ---------- */
 .contact { padding-bottom: clamp(72px, 10vh, 112px); }
 .contact-col { max-width: var(--col-w); }
@@ -186,8 +193,9 @@ html.req-open { overflow: hidden; scrollbar-gutter: stable; }
   /* Zero height: never hosts the canvas (the stage skips empty slots) but still marks where the
      strand starts bending into the ring (stage.js reads this slot's position). */
   .vision .fig-slot { height: 0; margin: 0; }
+  .status { margin-top: 32px; }
 
-  /* One ring closes the day on phones: vision text, the 24:00 eyebrow, the ring, then "Let's time
+  /* One ring closes the day on phones: vision text, the 24:00 eyebrow, the ring, then "Let's design
      yours." The clock reaches 24:00 when that eyebrow lands under the header, so the ring fills from
      22:00 to 24:00 in full view and is closed when the section lands. */
   .contact { padding-bottom: 72px; }

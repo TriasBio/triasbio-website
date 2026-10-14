@@ -140,6 +140,8 @@ main { position: relative; z-index: 1; }
 .eyebrow { margin: 0 0 22px; display: flex; gap: 12px; align-items: baseline; }
 .eyebrow .t { font-family: var(--mono); font-size: var(--fs-eyebrow); color: var(--fg-2); font-feature-settings: 'tnum' 1, 'zero' 1; }
 .eyebrow .l { font-family: var(--text); font-size: var(--fs-eyebrow); font-weight: 500; text-transform: uppercase; letter-spacing: .06em; color: var(--fg-3); }
+/* Marks a section that shows where the platform is headed rather than what ships today. */
+.status-tag { align-self: center; padding: 3px 9px; border: 1px solid var(--rule); border-radius: 999px; font-size: 12px; font-weight: 500; letter-spacing: .02em; color: var(--fg-2); white-space: nowrap; }
 
 /* ---------- Type ---------- */
 h1, h2, h3, h4 { margin: 0; }
